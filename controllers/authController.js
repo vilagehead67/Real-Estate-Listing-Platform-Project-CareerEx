@@ -268,7 +268,7 @@ const handleResendActivationCode = async (req, res) => {
                 user.password = hashedPassword 
                 await user.save()
                 res.status(200).json({
-                    message: "Password resset successful."
+                    message: "Password reset successful."
                 })
            
          } catch (error) {

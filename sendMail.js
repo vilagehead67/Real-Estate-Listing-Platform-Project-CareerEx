@@ -99,7 +99,7 @@ const sendForgottenPasswordEmail = async (user, token) => {
       },
     });
 
-    const resetLink = `https://real-estate-listing-platform-project.onrender.com/reset-password/${user._id}/${token}`;
+    const resetLink = `https://real-estate-listing-platform-project.onrender.com/api/reset-password/${user._id}/${token}`;
 
     const mailDetails = {
       from: `"HomeFinder Support" <${process.env.EMAIL}>`,

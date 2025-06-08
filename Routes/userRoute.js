@@ -1,6 +1,5 @@
  const express = require("express")
 const { authorization } = require("../middlewares/auth")
-const { handleGetAllSavedProperties } = require("../controllers/savedPropertyController")
 const { handleGetSingleUser, handleGetUserByQuery, handleGetAllUsers } = require("../controllers/user.Controller");
 const adminAuthorization = require("../middlewares/adminAuth");
 
