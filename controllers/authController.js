@@ -235,7 +235,7 @@ const handleResendActivationCode = async (req, res) => {
             })
         }
         const resetToken = await jwt.sign(
-        {user}, 
+        {id: user._id}, 
         `${process.env.ACCESS_TOKEN}`, 
         {expiresIn: "10m"})
         await sendMail.sendForgottenPasswordEmail(user, resetToken)
@@ -253,7 +253,7 @@ const handleResendActivationCode = async (req, res) => {
         const { userId, token } = req.params
          const {password, confirmPassword} = req.body
          try {
-            const user = await User.findById({userId})
+            const user = await User.findById(userId)
             if (!user) {
                 return res.status(404).json({
                     message: "User account does not exist."

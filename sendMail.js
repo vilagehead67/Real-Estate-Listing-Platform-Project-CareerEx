@@ -54,41 +54,6 @@ const resendActivationCodeEmail = async(email, activationCode) =>{
    }
 }
 
-// const sendForgottenPasswordEmail = async (email, token) => {
-//      try {
-//         const mailTransport = nodemailer.createTransport({
-//             service: "gmail",
-//             auth: {
-//                    user: `${process.env.EMAIL}`,
-//                    pass: `${process.env.EMAIL_PASSWORD}`
-//                  }
-//         })
-
-//         const mailDetails = {
-//             from: `${process.env.EMAIL}`,
-//             to: `${email}`,
-//             subject: "Reset Password Notification",
-//             html: `<html><p> ${user.firstName} Here is a token to reset your password. CLICK on the link below </p>
-//                    <a style= "display: inline-block; 
-//                    padding: 7px 14px; 
-//                    background-color: #007BFF; 
-//                    color: white; 
-//                    text-decoration: none;
-//                    border-radius: 4px; 
-//                    font-size: 16px; 
-//                    font-family: Arial, sans-serif;
-//                    " href='https://real-estate-listing-platform-project.onrender.com/reset-password/${user._id}/${token}>Reset Password</a>
-
-//                   <p> if the button does not work for any reason, please click the link below </>
-//                    <a href='/${token}'></a> <br>
-//             </html>`
-//         }
-//         await mailTransport.sendMail(mailDetails)
-//      } catch (error) {
-//         console.log(error)
-//      }
-// } 
-
 const sendForgottenPasswordEmail = async (user, token) => {
   try {
     const mailTransport = nodemailer.createTransport({

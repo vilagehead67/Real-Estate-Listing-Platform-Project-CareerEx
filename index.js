@@ -38,7 +38,7 @@ app.listen(PORT, () =>{
 })
 
 app.get("/", (req, res) =>{
-    res.send("Welcome to Proj. Momoh's Real Estate server")
+    res.send("Welcome to Prof. J. Momoh's Real Estate server")
  })
 
 
