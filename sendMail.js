@@ -1,6 +1,7 @@
 
 const crypto = require("crypto")
 const nodemailer = require("nodemailer")
+const User = require("./models/User")
 
 
 
@@ -67,7 +68,7 @@ const sendForgottenPasswordEmail = async (email, token) => {
             from: `${process.env.EMAIL}`,
             to: `${email}`,
             subject: "Reset Password Notification",
-            html: `<html>Here is a token to reset your password. CLICK on the link below
+            html: `<html><p> ${user.firstName} Here is a token to reset your password. CLICK on the link below </p>
                    <a style= "display: inline-block; 
                    padding: 7px 14px; 
                    background-color: #007BFF; 
@@ -76,11 +77,10 @@ const sendForgottenPasswordEmail = async (email, token) => {
                    border-radius: 4px; 
                    font-size: 16px; 
                    font-family: Arial, sans-serif;
-                   " href='https://real-estate-listing-platform-project.onrender.com/reset-password/${token}>Reset Password</a>
+                   " href='https://real-estate-listing-platform-project.onrender.com/reset-password/${user._id}/${token}>Reset Password</a>
 
-                   if the button does not work for any reason, please click the link below
-                   <a href='https://real-estate-listing-platform-project.onrender.com/reset-password/${token}>Reset Password</a>
-                   ${token}
+                  <p> if the button does not work for any reason, please click the link below </>
+                   <a href='/${token}'></a> <br>
             </html>`
         }
         await mailTransport.sendMail(mailDetails)

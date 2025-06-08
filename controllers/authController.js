@@ -249,9 +249,10 @@ const handleResendActivationCode = async (req, res) => {
 
     // Reset Password
     const handleResetPassword = async(req, res)=>{
+        const { userId, token } = req.params
          const {password, confirmPassword} = req.body
          try {
-            const user = await User.findOne({email: req.user.email})
+            const user = await User.findById({userId})
             if (!user) {
                 return res.status(404).json({
                     message: "User account does not exist."
