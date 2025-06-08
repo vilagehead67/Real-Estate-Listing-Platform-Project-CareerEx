@@ -8,7 +8,8 @@ const jwt = require("jsonwebtoken")
 const crypto = require("crypto")
 
 const sendMail = require("../sendMail")
-const {validEmail} = require("../sendMail")                   
+const {validEmail} = require("../sendMail")  
+               
 
 
 //  User registration
@@ -233,11 +234,11 @@ const handleResendActivationCode = async (req, res) => {
                 message: "User account not found."
             })
         }
-        const accessToken = await jwt.sign(
+        const resetToken = await jwt.sign(
         {user}, 
         `${process.env.ACCESS_TOKEN}`, 
-        {expiresIn: "5m"})
-        await sendMail.sendForgottenPasswordEmail(email, accessToken)
+        {expiresIn: "10m"})
+        await sendMail.sendForgottenPasswordEmail(user, resetToken)
 
         res.status(200).json({message: "Please check your email inbox"});
       } catch (error) {
