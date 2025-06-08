@@ -110,12 +110,12 @@ const sendForgottenPasswordEmail = async (user, token) => {
         <p>You requested a password reset. Click the button below to reset your password:</p>
         <a style="
           display: inline-block;
-          padding: 10px 16px;
+          padding: 6px 12px;
           background-color: #007BFF;
           color: white;
           text-decoration: none;
           border-radius: 4px;
-          font-size: 16px;
+          font-size: 12px;
           font-family: Arial, sans-serif;"
           href="${resetLink}">
           Reset Password

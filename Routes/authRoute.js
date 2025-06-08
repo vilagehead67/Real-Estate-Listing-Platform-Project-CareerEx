@@ -22,7 +22,7 @@ router.post("/auth/login", handleUserLogin)
 router.post("/forgotten-password", handleForgottenPassword)
 
 // Reset password
-router.post("/reset-password/:userId/:token", authorization, handleResetPassword)
+router.post("/reset-password/:userId/:token", handleResetPassword)
 
 // User/Agent Logout
 router.post("/logout", handleUserLogout)
