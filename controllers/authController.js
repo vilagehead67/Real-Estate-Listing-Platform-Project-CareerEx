@@ -5,26 +5,16 @@ const bcrypt = require("bcryptjs")
 
 const jwt = require("jsonwebtoken")
 
+const crypto = require("crypto")
+
 const sendMail = require("../sendMail")
-const {validEmail} = require("../sendMail")
-const { findUserService } = require("../service/indexService")
+const {validEmail} = require("../sendMail")                   
+
 
 //  User registration
 const handleUserRegistration = async(req, res) =>{
     try {
     const {firstName, lastName, email, phoneNumber, password, role} = req.body
-      if (!firstName) {
-         return  res.status(400).json({
-            message: "Enter your firstname"
-        })
-      }
-
-      if (!lastName) {
-         return res.status(400).json({
-            message: "Enter your lastname"
-        })
-      }
-      
      if (!validEmail(email)) {
             return res.status(400).json({
                 message: "Incorrect email format"
@@ -32,21 +22,26 @@ const handleUserRegistration = async(req, res) =>{
         }
 
       const existingUser = await User.findOne({email})
-
-      if (existingUser) {
+      if (existingUser && existingUser.isVerified) {
         return res.status(400).json({
-            message: "Account already exist."
+            message: "Account already exists."
         })
       }
 
+    //   user exists buy not verified
+    if (existingUser && !existingUser.isVerified) {
+        return res.status(400).json({
+            message: "Check your email for an activation code or click Resend to get another code."
+        })
+    }
+
       const existingPhoneNumber = await User.findOne({phoneNumber})
 
-      if (existingPhoneNumber) {
+      if (existingPhoneNumber && existingPhoneNumber.isVerified) {
             return res.status(400).json({
                 message: "Phone number has been taken."
             })
       }
-
       const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/
       if (!passwordRegex.test(password)){
         return res.status(400).json({
@@ -54,6 +49,8 @@ const handleUserRegistration = async(req, res) =>{
         })
       }
         const hashedPassword = await bcrypt.hash(password, 12)
+        const activationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const codeExpires = new Date(Date.now() + 5*60*1000); //5mins
 
         const newUser = new User({
              firstName, 
@@ -61,16 +58,24 @@ const handleUserRegistration = async(req, res) =>{
              email,
              phoneNumber,  
              password: hashedPassword, 
-             role
+             role,
+             activationCode,
+             codeExpires
         });
         await newUser.save();
         
-        res.status(201).json({
-            message: "User account created successfully",
-            newUser:{
-                firstName,lastName, email, phoneNumber, role
-            }
-        })
+        await sendMail.sendActivationCodeEmail(email, activationCode)
+
+
+         res.status(201).json({
+         message: "Registration successful. Check your email for activation code."
+       })
+        // res.status(201).json({
+        //     message: "User account created successfully",
+        //     newUser:{
+        //         firstName,lastName, email, phoneNumber, role
+        //     }
+        // })
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -78,6 +83,86 @@ const handleUserRegistration = async(req, res) =>{
     }
     
  }
+
+// Resend activation code
+
+const handleResendActivationCode = async (req, res) => {
+    const {email} = req.body
+    try {
+        const user = await User.findOne({email})
+         if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            })
+         }   
+         if (user.isVerified) {
+            return res.status(400).json({
+                message: "Account already verified"
+            })
+         }
+
+        //  generate new code
+       const activationCode = Math.floor(100000 + Math.random() * 900000).toString();
+       const codeExpires = new Date(Date.now() + 10 * 60 * 1000)
+        
+       user.activationCode = activationCode
+       user.codeExpires = codeExpires
+       await user.save();
+
+        await sendMail.resendActivationCodeEmail(email, activationCode, codeExpires)
+      res.status(200).json({
+        message: "Verification code sent successfully"
+    })
+    } catch (error) {
+        res.status(500).json(
+            error.message
+        )
+    }
+}
+
+
+//   Activation Code
+    const handleActivationCode = async (req, res) =>{
+       const {email, activationCode} = req.body
+       try {
+          const user = await User.findOne({email})
+
+          if (!user) {
+            return res.status(404).json({
+                message: "User not found."
+            })
+            }  
+          if (user.isVerified) {
+            return res.status(400).json({
+                message: "User account already verified."
+            })
+          }
+          if (String(user.activationCode) !== String(activationCode)) {
+            return res.status(400).json({
+                message: "Invalid code!!."
+            })
+          }
+          if (user.codeExpires && user.codeExpires < new Date()) {
+             return res.status(400).json({
+                message: "Code expired!"
+             })
+          }
+
+          user.isVerified = true
+          user.activationCode = null
+          user.codeExpires = null
+
+          await user.save()
+          res.status(200).json({
+            message: "Account verified successfully"
+          })
+       } catch (error) {
+         res.status(500).json(
+            error.message
+         )
+       }
+    } 
+
 
      //  Login
     const handleUserLogin = async(req, res) =>{
@@ -93,7 +178,12 @@ const handleUserRegistration = async(req, res) =>{
                 message: "User account does not exist."
             })
         }
-    
+       
+        if (!user.isVerified) {
+            return res.status(401).json({
+                message: "Please verify your eamil before logging in."
+            })
+        }
         const isMatch = await bcrypt.compare(password, user?.password)
     
         if (!isMatch) {
@@ -186,25 +276,30 @@ const handleUserRegistration = async(req, res) =>{
          }
     }
 
-     const  handleGetAllUsers = async(req, res)=>{
-    try {
-        const allUsers = await findUserService()
-    res.status(200).json({
-        message: "Success",
-        allUsers
-    })
 
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        })
+    // user logout
+    const handleUserLogout = async(req,res) =>{
+        try {
+            return res.status(200).json({
+                message: "Logout successful",
+                accessToken: null,
+                refreshToken: null
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "Logged out"
+            })
+        }
     }
-}
+
+
 
  module.exports = {
     handleUserRegistration,
+    handleResendActivationCode,
+    handleActivationCode,
     handleUserLogin,
     handleForgottenPassword,
     handleResetPassword,
-    handleGetAllUsers
+    handleUserLogout
  }

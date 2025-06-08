@@ -6,6 +6,14 @@ const User = require("../models/User")
 const validateRegister = (req, res, next) =>{
     const {firstName, lastName, email, phoneNumber, password} = req.body
     const errors = []
+
+    if (!firstName) {
+         errors.push(
+            "Please add your firstname")
+      }
+    if (!lastName) {
+         errors.push( "Please add your lastname")
+      }
     if (!email) {
         errors.push("Please add your email")
     }
@@ -23,6 +31,7 @@ const validateRegister = (req, res, next) =>{
 
     next()
 }
+
 
 const authorization = async (req, res, next) =>{
     const token = req.header("Authorization")

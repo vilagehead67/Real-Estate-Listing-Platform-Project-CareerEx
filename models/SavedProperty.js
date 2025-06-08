@@ -11,7 +11,8 @@ const savedPropertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Property",
         require: true
-        }
+        
+   }
 }, {timestamps: true})
 
 const SavedProperty = new mongoose.model("SavedProperty", savedPropertySchema)
