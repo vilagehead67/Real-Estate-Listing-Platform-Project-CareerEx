@@ -1,7 +1,7 @@
 
 const express = require("express");
 const { validateRegister, authorization } = require("../middlewares/auth");
-const { handleUserRegistration, handleUserLogin, handleForgottenPassword, handleResetPassword, handleUserLogout, handleActivationCode, handleResendActivationCode, } = require("../controllers/authController");
+const { handleUserRegistration, handleUserLogin, handleForgottenPassword, handleResetPassword, handleUserLogout, handleActivationCode, handleResendActivationCode, handleChangePassword, } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -23,6 +23,10 @@ router.post("/forgotten-password", handleForgottenPassword)
 
 // Reset password
 router.post("/reset-password/:userId/:token", handleResetPassword)
+
+// Change password
+router.patch("/change-password", authorization, handleChangePassword )
+
 
 // User/Agent Logout
 router.post("/logout", handleUserLogout)

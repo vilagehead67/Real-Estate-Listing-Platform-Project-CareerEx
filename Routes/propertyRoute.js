@@ -7,7 +7,7 @@ const { handlePropertyListingsByAgent, handleGetAvailableProperties, handleGetSp
 const router = express.Router()
 
 // Property listings by agents
- router.post("/agent/add-property", authorization, agentAuthorization, handlePropertyListingsByAgent)
+ router.post("/agent/list-property", authorization, agentAuthorization, handlePropertyListingsByAgent)
 
 //  Property update by an agent
 router.patch("/agent/update-property/:id", authorization, agentAuthorization, handleUpdatePropertyByAgent )
@@ -15,7 +15,7 @@ router.patch("/agent/update-property/:id", authorization, agentAuthorization, ha
 //  Property delete by agent
 router.delete("/agent/delete-property/:id", authorization, agentAuthorization, handleDeletePropertyByAgent)
 
-// Get all available Properties
+// Get all available Properties and 
 router.get("/properties", authorization, handleGetAvailableProperties)
 
 // Get Specific property by ID

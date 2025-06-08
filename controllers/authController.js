@@ -278,6 +278,35 @@ const handleResendActivationCode = async (req, res) => {
          }
     }
 
+    // Change password
+    // Reset Password
+    const handleChangePassword = async(req, res)=>{
+         const {password, confirmPassword} = req.body
+         try {
+            const user = await User.findOne({email: req.user.email})
+            if (!user) {
+                return res.status(404).json({
+                    message: "User account does not exist."
+                })
+                 }
+              if (password !== confirmPassword) {
+                 return res.status(400).json({
+                    message: "Password must match confirm password"
+                 })
+            }   
+                const hashedPassword = await bcrypt.hash(password, 12)
+                user.password = hashedPassword 
+                await user.save()
+                res.status(200).json({
+                    message: "Password changed successful."
+                })
+           
+         } catch (error) {
+            res.status(500).json({
+                error: "Unable to change password"
+            })
+         }
+        }
 
     // user logout
     const handleUserLogout = async(req,res) =>{
@@ -303,5 +332,6 @@ const handleResendActivationCode = async (req, res) => {
     handleUserLogin,
     handleForgottenPassword,
     handleResetPassword,
+    handleChangePassword,
     handleUserLogout
  }
