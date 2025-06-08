@@ -259,11 +259,17 @@ const handleResendActivationCode = async (req, res) => {
                     message: "User account does not exist."
                 })
                  }
+
+          const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
+          if (decoded.id !== user.id) {
+           return res.status(401).json({ message: "Invalid token" });
+          }
               if (password !== confirmPassword) {
                  return res.status(400).json({
                     message: "Password must match confirm password"
                  })
             }   
+        
                 const hashedPassword = await bcrypt.hash(password, 12)
                 user.password = hashedPassword 
                 await user.save()
@@ -272,14 +278,13 @@ const handleResendActivationCode = async (req, res) => {
                 })
            
          } catch (error) {
-            res.status(500).json({
-                error: "Unable to reset password"
-            })
+            res.status(500).json(
+                error.message
+            )
          }
     }
 
     // Change password
-    // Reset Password
     const handleChangePassword = async(req, res)=>{
          const {password, confirmPassword} = req.body
          try {
