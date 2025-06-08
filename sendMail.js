@@ -68,13 +68,19 @@ const sendForgottenPasswordEmail = async (email, token) => {
             to: `${email}`,
             subject: "Reset Password Notification",
             html: `<html>Here is a token to reset your password. CLICK on the link below
-                   <a style= "display: inline-block; padding: 8px 16px; 
-                   background-color: #007BFF; color: white; text-decoration: none;
-                   border-radius: 4px; font-size: 16px; font-family: Arial, sans-serif;
-                   " href='https://www.examplaza.com/reset-password/${token}>Reset Password</a>
+                   <a style= "display: inline-block; 
+                   padding: 7px 14px; 
+                   background-color: #007BFF; 
+                   color: white; 
+                   text-decoration: none;
+                   border-radius: 4px; 
+                   font-size: 16px; 
+                   font-family: Arial, sans-serif;
+                   " href='https://real-estate-listing-platform-project.onrender.com/reset-password/${token}>Reset Password</a>
 
-                   if the button does not work for any reason, please click on link below
-                   <a href='https://www.examplaza.com/reset-password/${token}>Reset Password</a>
+                   if the button does not work for any reason, please click the link below
+                   <a href='https://real-estate-listing-platform-project.onrender.com/reset-password/${token}>Reset Password</a>
+                   ${token}
             </html>`
         }
         await mailTransport.sendMail(mailDetails)
