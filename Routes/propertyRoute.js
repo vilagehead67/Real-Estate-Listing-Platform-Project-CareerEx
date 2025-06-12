@@ -18,11 +18,11 @@ router.patch("/agent/update-property/:id", authorization, agentAuthorization, ha
 //  Property delete by agent
 router.delete("/agent/delete-property/:id", authorization, agentAuthorization, handleDeletePropertyByAgent)
 
-// 
+// Admin get all properties
 router.get("/admin/all-properties", authorization, adminAuthorization, handleGetAllPropertiesForAdmin)
 
 // 
-router.get("/agent/pending-listings", authorization, agentAuthorization, handleGetPendingListings)
+// router.get("/agent/pending-listings", authorization, agentAuthorization, handleGetPendingListings)
 
 // Admin approve property amd Notification
 router.patch("/approve/:id", authorization, adminAuthorization, handleApproveProperty)

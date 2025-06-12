@@ -107,7 +107,7 @@ const handleDeletePropertyByAgent = async(req, res) =>{
 
 const handleGetAllPropertiesForAdmin = async(req, res) =>{
     try {
-        const allProperties = await Property.find().populate("agent", "email phoneNumber")
+        const allProperties = await Property.find({status: "pending"}).populate("agent", "email phoneNumber")
       if (allProperties.length === 0) {
         return res.status(400).json({
             message: "Properties not found."
