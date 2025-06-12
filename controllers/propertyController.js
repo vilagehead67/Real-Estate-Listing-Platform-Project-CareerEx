@@ -125,14 +125,6 @@ const handleGetAllPropertiesForAdmin = async(req, res) =>{
     }
  }
 
-//  const handleGetPendingListings = async(req, res) =>{
-//     try {
-       
-      
-//     } catch (error) {
-//         res.status(500).json(error.message)
-//     }
-//  }
 
 const handleGetAvailableProperties = async(req, res) =>{
     try {
@@ -206,7 +198,6 @@ const handleApproveProperty = async (req, res) => {
     handleDeletePropertyByAgent,
     handleApproveProperty,
     handleGetAllPropertiesForAdmin,
-    // handleGetPendingListings,
     handleGetAvailableProperties,
     handleGetSpecificProperty,
  }
