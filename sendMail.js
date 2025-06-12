@@ -105,6 +105,36 @@ const validEmail = (email) =>{
         return re.test(String(email).toLowerCase())
     }
 
+const sendAdminNotification = async(property) =>{
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    })
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: process.env.ADMIN_EMAIL,
+      subject: "New Property Listing Submitted",
+      html: `
+           <h3>New Property Listing</h3>
+           <p><strong>Title:</strong> ${property.title}</p>
+           <p><strong>Price:</strong> ${property.price}</p>
+           <p><strong>Agent ID:</strong> ${property.agent}</p>
+           <p><strong>Status:</strong> ${property.status}</p>
+           <p> Please login to review and approve this listing.</p>
+           `
+    }
+
+    await transporter.sendMail(mailOptions)
+  } catch (error) {
+    console.log("Failed to send admin notification:", error.message)
+  }
+}    
+
 const sendApprovalNotification = async(email, propertyTitle) => {
    const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -128,5 +158,6 @@ const sendApprovalNotification = async(email, propertyTitle) => {
        resendActivationCodeEmail,
        sendForgottenPasswordEmail,
        validEmail,
+       sendAdminNotification,
        sendApprovalNotification
     }

@@ -2,7 +2,7 @@
 const mongoose = require("mongoose")
 const User = require("../models/User")
 const Property = require("../models/Property");
-const { sendApprovalNotification } = require("../sendMail");
+const { sendApprovalNotification, sendAdminNotification } = require("../sendMail");
 
 
 
@@ -26,6 +26,8 @@ const handlePropertyListingsByAgent = async(req, res) =>{
 
 await newProperty.save();
 
+// Notify admin
+await sendAdminNotification(newProperty)
 res.status(201).json({
     message: "Property added successfully",
     newProperty: {
