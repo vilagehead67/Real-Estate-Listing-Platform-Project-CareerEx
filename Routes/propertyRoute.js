@@ -2,7 +2,7 @@
 const express = require("express")
 const { authorization } = require("../middlewares/auth")
 const { agentAuthorization } = require("../middlewares/agentAuth")
-const { handlePropertyListingsByAgent, handleGetAvailableProperties, handleGetSpecificProperty, handleUpdatePropertyByAgent, handleDeletePropertyByAgent, handleApproveProperty, handleGetAllPropertiesForAdmin, handleGetPendingListings } = require("../controllers/propertyController")
+const { handlePropertyListingsByAgent, handleGetAvailableProperties, handleGetSpecificProperty, handleUpdatePropertyByAgent, handleDeletePropertyByAgent, handleApproveProperty, handleGetAllPropertiesForAdmin } = require("../controllers/propertyController")
 const adminAuthorization = require("../middlewares/adminAuth")
 const checkSubscription = require("../middlewares/checkSubscription")
 
@@ -18,7 +18,7 @@ router.patch("/agent/update-property/:id", authorization, agentAuthorization, ha
 //  Property delete by agent
 router.delete("/agent/delete-property/:id", authorization, agentAuthorization, handleDeletePropertyByAgent)
 
-// Admin get all properties
+// Admin get all pending properties
 router.get("/admin/all-properties", authorization, adminAuthorization, handleGetAllPropertiesForAdmin)
 
 // 
