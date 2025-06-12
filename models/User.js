@@ -36,6 +36,13 @@ const userSchema = new mongoose.Schema({
     },
     codeExpires: {
         type:Date
+    },
+    isSubscribed: {
+        type: Boolean,
+        default: false
+    },
+    subscriptionExpiresAt: {
+        type: Date
     }
 
 }, {timestamps: true})

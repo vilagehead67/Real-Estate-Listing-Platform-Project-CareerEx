@@ -8,12 +8,15 @@ const propertyRoute = require("./propertyRoute")
 
 const savePropertyRoute = require("./savePropertyRoute")
 
+const paystackRoute = require("./paystackRoute")
+
 
 const routes= [
     authRoute,
     userRoute,
     propertyRoute,
-    savePropertyRoute
+    savePropertyRoute,
+    paystackRoute
 ]
 
 module.exports = routes

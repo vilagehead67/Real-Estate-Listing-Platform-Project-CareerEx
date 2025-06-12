@@ -71,12 +71,6 @@ const handleUserRegistration = async(req, res) =>{
          res.status(201).json({
          message: "Registration successful. Check your email for activation code."
        })
-        // res.status(201).json({
-        //     message: "User account created successfully",
-        //     newUser:{
-        //         firstName,lastName, email, phoneNumber, role
-        //     }
-        // })
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -182,7 +176,7 @@ const handleResendActivationCode = async (req, res) => {
        
         if (!user.isVerified) {
             return res.status(401).json({
-                message: "Please verify your eamil before logging in."
+                message: "Please verify your email before logging in."
             })
         }
         const isMatch = await bcrypt.compare(password, user?.password)
@@ -247,7 +241,6 @@ const handleResendActivationCode = async (req, res) => {
         })
       }
     }
-
     // Reset Password
     const handleResetPassword = async(req, res)=>{
         const { userId, token } = req.params

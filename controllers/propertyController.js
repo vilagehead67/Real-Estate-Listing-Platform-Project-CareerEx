@@ -1,6 +1,8 @@
 
+const mongoose = require("mongoose")
 const User = require("../models/User")
-const Property = require("../models/Property")
+const Property = require("../models/Property");
+const { sendApprovalNotification } = require("../sendMail");
 
 
 
@@ -33,7 +35,7 @@ res.status(201).json({
         price,
         location,
         category,
-        agent
+        agent,
     }
 })
 
@@ -103,6 +105,35 @@ const handleDeletePropertyByAgent = async(req, res) =>{
     })
  }
 
+const handleGetAllPropertiesForAdmin = async(req, res) =>{
+    try {
+        const allProperties = await Property.find().populate("agent", "email phoneNumber")
+      if (allProperties.length === 0) {
+        return res.status(400).json({
+            message: "Properties not found."
+        })
+      }
+
+      res.status(200).json({
+        message: "Success",
+        allProperties})
+
+    } catch (error) {
+        res.status(500).json(
+            error.message
+        )
+    }
+ }
+
+ const handleGetPendingListings = async(req, res) =>{
+    try {
+       
+      
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+ }
+
 const handleGetAvailableProperties = async(req, res) =>{
     try {
          const {location, category, minPrice, maxPrice} = req.query;
@@ -117,7 +148,8 @@ const handleGetAvailableProperties = async(req, res) =>{
             if(minPrice) filters.price.$gte = parseFloat(minPrice);
             if(maxPrice) filters.price.$lte = parseFloat(maxPrice) 
         }
-        const availableProperties = await Property.find(filters).populate("agent", "email phoneNumber");
+         filters.status = "approved"
+        const availableProperties = await Property.find(filters).select("-status").populate("agent", "email phoneNumber");
         res.status(200).json({
             message: "Success",
             availableProperties
@@ -145,12 +177,36 @@ const handleGetSpecificProperty = async(req, res) =>{
           res.status(500).json({error: "Failed to fetch property"}) 
        }
    }
+
+const handleApproveProperty = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const property = await Property.findById(id).populate("agent", "email");
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    property.status = "approved";
+    await property.save();
+
+    await sendApprovalNotification(property.agent.email, property.title);
+
+    res.status(200).json({ message: "Property approved and agent notified" });
+  } catch (error) {
+    res.status(500).json({ message: "Error approving property", error: error.message });
+  }
+};
    
  
  module.exports = {
     handlePropertyListingsByAgent,
     handleUpdatePropertyByAgent,
     handleDeletePropertyByAgent,
+    handleApproveProperty,
+    handleGetAllPropertiesForAdmin,
+    handleGetPendingListings,
     handleGetAvailableProperties,
-    handleGetSpecificProperty
+    handleGetSpecificProperty,
  }

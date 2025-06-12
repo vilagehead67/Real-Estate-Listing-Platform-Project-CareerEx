@@ -105,9 +105,28 @@ const validEmail = (email) =>{
         return re.test(String(email).toLowerCase())
     }
 
+const sendApprovalNotification = async(email, propertyTitle) => {
+   const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: "Property Listing Approved",
+    html: `<p>Your property <strong>${propertyTitle}</strong> has been approved and is now visible to the public.</p>`,
+  };
+   await transporter.sendMail(mailOptions)
+}    
+
     module.exports = {
        sendActivationCodeEmail,
        resendActivationCodeEmail,
        sendForgottenPasswordEmail,
-       validEmail
+       validEmail,
+       sendApprovalNotification
     }

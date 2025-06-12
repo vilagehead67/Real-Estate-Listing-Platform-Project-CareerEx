@@ -31,6 +31,11 @@ const propertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: "User", 
         require: true
+    },
+    status: {
+        type: String,
+        enum: ["pending", "approved"],
+        default: "pending"
     }
     }, {timestamps: true})
 

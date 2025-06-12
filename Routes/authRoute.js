@@ -12,7 +12,6 @@ router.post("/auth/register", validateRegister, handleUserRegistration)
 router.post("/auth/resend", handleResendActivationCode)
 
 //  Activation code
-
 router.post("/auth/verify", handleActivationCode)
 
 //  User/Agent Login
